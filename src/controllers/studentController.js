@@ -7,7 +7,7 @@ const createStudent = async (req, res) => {
         const data = req.body
         let { fullName, subject, marks,userId } = data
 
-        if (validation.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter details to create student mark record" })
+        if (validation.isValidBody(data)) return res.status(400).send({ status: false, message: "Enter all details to create student mark record" })
 
         if (!validation.isValid(fullName)) return res.status(400).send({ status: false, message: "enter fullname of the student" })
         fullName = fullName.toLowerCase()
@@ -17,7 +17,7 @@ const createStudent = async (req, res) => {
         if (!validation.isValid(subject)) return res.status(400).send({ status: false, message: "enter subject name" })
         subject = subject.toLowerCase()
         data.subject = subject
-        if (!["physics", "chemistry", "maths", "english"].includes(subject)) return res.status(400).send({ status: false, message: "provide a correct subject name" })
+        if (!["physics", "chemistry", "maths", "english"].includes(subject)) return res.status(400).send({ status: false, message: "provide a correct subject name [physics, chemistry, maths, english]" })
 
 
         if (!validation.isValid(marks)) return res.status(400).send({ status: false, message: "enter secured mark of the student" })
@@ -94,7 +94,7 @@ const updateStudent = async (req, res) => {
         }
 
         if (!validation.isValidObjectId(studentId)) return res.status(400).send({ status: false, message: "invalid studentId" })
-        let findStudent = await studentModel.findOne({ _id: studentId })
+        let findStudent = await studentModel.findOne({ _id: studentId,isDeleted:false })
         if (!findStudent) return res.status(400).send({ status: false, message: "no student exsists with this id" })
 
         let updateStudent = await studentModel.findOneAndUpdate({ _id: studentId }, { $set: { fullName: fullName, subject: subject, marks: marks } }, { new: true })

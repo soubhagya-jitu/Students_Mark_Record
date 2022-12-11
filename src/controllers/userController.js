@@ -29,7 +29,7 @@ const createUser = async (req, res) => {
         if (findEmail) return res.status(409).send({ status: false, message: "account already exsists with this emaildId provide a new one" })
 
         if (!validation.isValid(password)) return res.status(400).send({ status: false, message: "enter the phone number" })
-        if (!validation.isValidPassword(password)) return res.status(400).send({ status: false, message: "enter valid password" })
+        if (!validation.isValidPassword(password)) return res.status(400).send({ status: false, message: "Password should be of minimum 8 & maximum 15 characters having one uppercase,one special character and one number" })
         let saltRounds = 10
         let hash = bcrypt.hashSync(password, saltRounds)
         data.password = hash
@@ -49,15 +49,17 @@ const loginUser = async (req, res) => {
 
         if (validation.isValidBody(data)) return res.status(400).send({ status: false, message: "Provide all details to login" })
 
+        if (!validation.isValid(emailOrPhone)) return res.status(400).send({ status: false, message: "enter your emailId or phone" })
         emailOrPhone= emailOrPhone.toLowerCase()
-        data.emailOrPhonee = emailOrPhone
+        data.emailOrPhone = emailOrPhone
         let findUser = await userModel.findOne({ $or: [{ email: emailOrPhone }, { phone: emailOrPhone }] })
         if (!findUser) return res.status(400).send({ status: false, message: "No account exsists with this email or phone" })
 
+        if (!validation.isValid(password)) return res.status(400).send({ status: false, message: "enter your password" })
         let verifyPassword = await bcrypt.compare(password, findUser.password)
         if (!verifyPassword) return res.status(400).send({ status: false, message: "enter your correct password to login" })
 
-        let token = jwt.sign({ userId: findUser._id }, "PROJECT-6", { expiresIn: "600s" })
+        let token = jwt.sign({ userId: findUser._id }, "PROJECT-6", { expiresIn: "1d" })
 
         return res.status(201).send({ status: true, userId:findUser._id,message: token })
     } catch (error) {

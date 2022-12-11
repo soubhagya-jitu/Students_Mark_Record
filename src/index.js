@@ -11,7 +11,7 @@ mongoose.connect("mongodb+srv://manaskumar:iFVJhjYrsH7iars8@cluster0.s4pqkzd.mon
     useNewUrlParser:true
 })
 
-.then(()=>console.log("mongodb connected"))
+.then(()=>console.log("Mongodb is connected"))
 .catch(err=>console.log(err))
 
 app.use("/",router)
